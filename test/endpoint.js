@@ -5,9 +5,10 @@ const test = require('tape')
 const servertest = require('servertest')
 const app = require('../lib/app')
 const { executeQuery } = require('../lib/db')
+const { validateDataWithStructure } = require('../lib/utils/validateData')
 const { CREATE_TABLE_SQL, PROJECT_DATA_STRUCTURE } = require('../lib/utils/constants')
 const { TEST_DATA, INVALID_DATA, UPDATE_DATA } = require('./testData')
-const { validateDataWithStructure } = require('../lib/utils/validateData')
+
 const server = http.createServer(app)
 
 // Setup database tables before running tests
