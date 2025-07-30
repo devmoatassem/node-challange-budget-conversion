@@ -20,9 +20,9 @@ const createTableSql = `
 `
 let data = ''
 
-db.executeQuery(createTableSql, [], (err) => {
+db.query(createTableSql, err => {
   if (err) return console.error('Error creating table:', err)
-  stream.on('data', (chunk) => {
+  stream.on('data', chunk => {
     data += chunk.toString()
 
     const lines = data.split('\n')
@@ -32,17 +32,15 @@ db.executeQuery(createTableSql, [], (err) => {
       if (index === 0) return
 
       const values = line.split(',')
-      const parsedValues = values.map((value) => {
+      const parsedValues = values.map(value => {
         if (value === 'NULL') return null
         if (!isNaN(value)) return parseFloat(value)
         return `"${value}"`
       })
 
-      const insertSql = `INSERT INTO project values (${parsedValues.join(
-        ','
-      )})`
+      const insertSql = `INSERT INTO project values (${parsedValues.join(',')})`
 
-      db.query(insertSql, (err) => {
+      db.query(insertSql, err => {
         if (err) {
           console.error('Error inserting Project ID:', values[0], err)
           process.exit(1)
@@ -53,7 +51,7 @@ db.executeQuery(createTableSql, [], (err) => {
   })
 
   stream.on('end', () => {
-    db.end((err) => {
+    db.end(err => {
       if (err) return console.error('Error closing database connection:', err)
       console.log('Database connection closed')
     })
