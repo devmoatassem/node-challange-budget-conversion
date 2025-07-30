@@ -66,7 +66,7 @@ test('GET /nonexistent should return 404', function (t) {
   })
 })
 const projectData = {
-  projectId: 1,
+  projectId: 707078,
   projectName: 'Humitas Hewlett Packard',
   year: 2024,
   currency: 'EUR',
@@ -96,7 +96,7 @@ test('POST /api/project/budget should create project', function (t) {
 test('GET /api/project/budget/:id should return project', function (t) {
   servertest(
     server,
-    '/api/project/budget/1',
+    '/api/project/budget/707078',
     { encoding: 'json' },
     function (err, res) {
       console.log(res)
@@ -174,4 +174,51 @@ test('GET /project/budget/undefined should return 400', function (t) {
       t.end()
     }
   )
+})
+test('PUT /api/project/budget/:id should update project', function (t) {
+  const updateData = {
+    projectName: 'Project X',
+    year: 2025,
+    currency: 'USD',
+    initialBudgetLocal: 1000000,
+    budgetUsd: 1100000,
+    initialScheduleEstimateMonths: 12,
+    adjustedScheduleEstimateMonths: 14,
+    contingencyRate: 10,
+    escalationRate: 5,
+    finalBudgetUsd: 1200000
+  }
+
+  servertest(
+    server,
+    '/api/project/budget/707078',
+    {
+      encoding: 'json',
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 200, 'Should return 200')
+      t.end()
+    }
+  ).end(JSON.stringify(updateData))
+})
+
+test('PUT /api/project/budget/:id with invalid data should return 400', function (t) {
+  servertest(
+    server,
+    '/api/project/budget/707078',
+    { encoding: 'json', method: 'PUT' },
+    function (err, res) {
+      console.log(res)
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify({ ...invalidData, projectId: undefined }))
 })
