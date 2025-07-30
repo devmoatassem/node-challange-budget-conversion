@@ -64,6 +64,49 @@ test('POST /api/project/budget should create project', function (t) {
   }).end(JSON.stringify(TEST_DATA))
 })
 
+test('POST /api/project/budget with empty body should return 400', function (t) {
+  servertest(
+    server,
+    '/api/project/budget',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify({}))
+})
+
+test('POST /api/project/budget with invalid data should return 400', function (t) {
+  servertest(
+    server,
+    '/api/project/budget',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(TEST_DATA)
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify(INVALID_DATA))
+})
+
 test('POST /api/api-conversion should return project', function (t) {
   servertest(
     server,
@@ -151,49 +194,6 @@ test('GET /api/project/budget/:id should return project', function (t) {
   )
 })
 
-test('POST /api/project/budget with empty body should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({}))
-})
-
-test('POST /api/project/budget with invalid data should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(TEST_DATA)
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify(INVALID_DATA))
-})
-
 test('GET /project/budget/undefined should return 400', function (t) {
   servertest(
     server,
@@ -255,6 +255,12 @@ test('POST /api/project/budget/currency should return project', function (t) {
     function (err, res) {
       t.error(err, 'No error')
       t.equal(res.statusCode, 200, 'Should return 200')
+      t.ok(res.body.success, 'Should return success')
+      t.ok(res.body.data, 'Should return data')
+      t.ok(res.body?.data?.length > 0, 'Should return data')
+      res.body.data.forEach((entry, idx) => {
+        t.ok(entry.finalBudgetTtd, `Entry ${idx} should return finalBudgetTtd`)
+      })
       t.end()
     }
   ).end(JSON.stringify({
@@ -308,6 +314,21 @@ test('POST /api/project/budget/currency with invalid currency should return 500'
     projectName: 'Project X',
     currency: 'invalid'
   }))
+})
+
+test('DELETE /api/project/budget/:id with invalid id should return 400', function (t) {
+  servertest(
+    server,
+    '/api/project/budget/invalid',
+    { encoding: 'json', method: 'DELETE' },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  )
 })
 
 test('DELETE /api/project/budget/:id should delete project', function (t) {
