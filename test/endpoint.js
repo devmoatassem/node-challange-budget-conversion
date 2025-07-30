@@ -99,7 +99,6 @@ test('GET /api/project/budget/:id should return project', function (t) {
     '/api/project/budget/707078',
     { encoding: 'json' },
     function (err, res) {
-      console.log(res)
       t.error(err, 'No error')
       t.equal(res.statusCode, 200, 'Should return 200')
       t.end()
@@ -213,7 +212,6 @@ test('PUT /api/project/budget/:id with invalid data should return 400', function
     '/api/project/budget/707078',
     { encoding: 'json', method: 'PUT' },
     function (err, res) {
-      console.log(res)
       t.error(err, 'No error')
       t.equal(res.statusCode, 400, 'Should return 400')
       t.equal(res.body.success, false, 'Should return success: false')
@@ -279,7 +277,6 @@ test('POST /api/project/budget/currency with invalid currency should return 500'
       }
     },
     function (err, res) {
-      console.log(res)
       t.error(err, 'No error')
       t.equal(res.statusCode, 500, 'Should return 500')
       t.equal(res.body.success, false, 'Should return success: false')
