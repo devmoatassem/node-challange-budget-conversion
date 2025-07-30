@@ -69,6 +69,22 @@ test('POST /api/project/budget should create project', function (t) {
   }).end(JSON.stringify(TEST_DATA))
 })
 
+test('POST /api/project/budget duplicate id should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget',
+      { encoding: 'json', method: 'POST', headers: { 'Content-Type': 'application/json' } },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
+      }
+    ).end(JSON.stringify(TEST_DATA))
+  })
+
 test('POST /api/project/budget empty body should return 400',
   function (t) {
     servertest(
