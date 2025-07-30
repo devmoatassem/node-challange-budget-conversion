@@ -194,7 +194,6 @@ test('GET /api/project/budget/:id should return project', function (t) {
       t.ok(res.body.success, 'Should return success')
       t.ok(res.body.data, 'Should return data')
       t.equal(res.body.data.projectId, 707078, 'Should return projectId')
-      // validateDataWithStructure(data, PROJECT_DATA_STRUCTURE) use this to confirm the data is valid
       const { isValid } = validateDataWithStructure(res.body.data, PROJECT_DATA_STRUCTURE)
       t.ok(isValid, 'Should return valid data')
       t.end()
