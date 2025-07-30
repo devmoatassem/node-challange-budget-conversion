@@ -67,7 +67,7 @@ test('GET /nonexistent should return 404', function (t) {
 })
 const projectData = {
   projectId: 707078,
-  projectName: 'Humitas Hewlett Packard',
+  projectName: 'Rigua Nintendo',
   year: 2024,
   currency: 'EUR',
   initialBudgetLocal: 316974.5,
@@ -91,6 +91,80 @@ test('POST /api/project/budget should create project', function (t) {
     t.ok(res.body.success, 'Should return success')
     t.end()
   }).end(JSON.stringify(projectData))
+})
+
+test('POST /api/api-conversion should return project', function (t) {
+  servertest(
+    server,
+    '/api/api-conversion',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 200, 'Should return 200')
+      t.ok(res.body.success, 'Should return success')
+      t.ok(res.body.data, 'Should return data')
+      t.ok(res.body?.data?.length > 0, 'Should return data')
+      res.body.data.forEach((entry, idx) => {
+        t.ok(entry.budgetTtd, `Entry ${idx} should return budgetTtd`)
+        t.ok(entry.finalBudgetTtd, `Entry ${idx} should return finalBudgetTtd`)
+      })
+      t.end()
+    }
+  ).end(JSON.stringify({
+    projectName: 'Rigua Nintendo',
+    currency: 'TTD'
+  }))
+})
+
+test('POST /api/api-conversion with invalid data should return 400', function (t) {
+  servertest(
+    server,
+    '/api/api-conversion',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify({ projectName: 'Humitas Hewlett Packard', currency: 'TTD' }))
+})
+
+test('POST /api/api-conversion with invalid params should return 400', function (t) {
+  servertest(
+    server,
+    '/api/api-conversion',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify({
+    year: 2025,
+    projectName: 'Project X'
+  }))
 })
 
 test('GET /api/project/budget/:id should return project', function (t) {
@@ -262,7 +336,7 @@ test('POST /api/project/budget/currency with invalid data should return 400', fu
       t.ok(res.body.message, 'Should return error message')
       t.end()
     }
-  ).end(JSON.stringify({ projectName: 'Humitas Hewlett Packard', currency: 'EUR' }))
+  ).end(JSON.stringify({ projectName: 'Rigua Nintendo', currency: 'EUR' }))
 })
 
 test('POST /api/project/budget/currency with invalid currency should return 500', function (t) {
