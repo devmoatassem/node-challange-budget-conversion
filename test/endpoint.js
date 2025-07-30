@@ -6,7 +6,10 @@ const servertest = require('servertest')
 const app = require('../lib/app')
 const { executeQuery } = require('../lib/db')
 const { validateDataWithStructure } = require('../lib/utils/validateData')
-const { CREATE_TABLE_SQL, PROJECT_DATA_STRUCTURE } = require('../lib/utils/constants')
+const {
+  CREATE_TABLE_SQL,
+  PROJECT_DATA_STRUCTURE
+} = require('../lib/utils/constants')
 const { TEST_DATA, INVALID_DATA, UPDATE_DATA } = require('./testData')
 
 const server = http.createServer(app)
@@ -66,48 +69,50 @@ test('POST /api/project/budget should create project', function (t) {
   }).end(JSON.stringify(TEST_DATA))
 })
 
-test('POST /api/project/budget with empty body should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({}))
-})
-
-test('POST /api/project/budget with invalid data should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+test('POST /api/project/budget empty body should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget',
+      {
+        encoding: 'json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       },
-      body: JSON.stringify(TEST_DATA)
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify(INVALID_DATA))
-})
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
+      }
+    ).end(JSON.stringify({}))
+  })
+
+test('POST /api/project/budget invalid data should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget',
+      {
+        encoding: 'json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(TEST_DATA)
+      },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
+      }
+    ).end(JSON.stringify(INVALID_DATA))
+  })
 
 test('POST /api/api-conversion should return project', function (t) {
   servertest(
@@ -138,50 +143,55 @@ test('POST /api/api-conversion should return project', function (t) {
   }))
 })
 
-test('POST /api/api-conversion with invalid data should return 400', function (t) {
-  servertest(
-    server,
-    '/api/api-conversion',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+test('POST /api/api-conversion invalid data should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/api-conversion',
+      {
+        encoding: 'json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
       }
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({ projectName: 'Humitas Hewlett Packard', currency: 'TTD' }))
-})
+    ).end(JSON.stringify({
+      projectName: 'Humitas Hewlett Packard',
+      currency: 'TTD'
+    }))
+  })
 
-test('POST /api/api-conversion with invalid params should return 400', function (t) {
-  servertest(
-    server,
-    '/api/api-conversion',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+test('POST /api/api-conversion invalid params should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/api-conversion',
+      {
+        encoding: 'json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
       }
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({
-    year: 2025,
-    projectName: 'Project X'
-  }))
-})
+    ).end(JSON.stringify({
+      year: 2025,
+      projectName: 'Project X'
+    }))
+  })
 
 test('GET /api/project/budget/:id should return project', function (t) {
   servertest(
@@ -194,7 +204,10 @@ test('GET /api/project/budget/:id should return project', function (t) {
       t.ok(res.body.success, 'Should return success')
       t.ok(res.body.data, 'Should return data')
       t.equal(res.body.data.projectId, 707078, 'Should return projectId')
-      const { isValid } = validateDataWithStructure(res.body.data, PROJECT_DATA_STRUCTURE)
+      const { isValid } = validateDataWithStructure(
+        res.body.data,
+        PROJECT_DATA_STRUCTURE
+      )
       t.ok(isValid, 'Should return valid data')
       t.end()
     }
@@ -209,11 +222,12 @@ test('GET /project/budget/undefined should return 400', function (t) {
     function (err, res) {
       t.error(err, 'No error')
       t.equal(res.statusCode, 400, 'Should return 404')
-      t.equal(res.body.success, false, 'Should return success: false')
+      t.equal(res.body.success, false, 'Should return false')
       t.end()
     }
   )
 })
+
 test('PUT /api/project/budget/:id should update project', function (t) {
   servertest(
     server,
@@ -233,20 +247,21 @@ test('PUT /api/project/budget/:id should update project', function (t) {
   ).end(JSON.stringify(UPDATE_DATA))
 })
 
-test('PUT /api/project/budget/:id with invalid data should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget/707078',
-    { encoding: 'json', method: 'PUT' },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({ ...INVALID_DATA, projectId: undefined }))
-})
+test('PUT /api/project/budget/:id invalid data should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget/707078',
+      { encoding: 'json', method: 'PUT' },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
+      }
+    ).end(JSON.stringify({ ...INVALID_DATA, projectId: undefined }))
+  })
 
 test('POST /api/project/budget/currency should return project', function (t) {
   servertest(
@@ -265,8 +280,8 @@ test('POST /api/project/budget/currency should return project', function (t) {
       t.ok(res.body.success, 'Should return success')
       t.ok(res.body.data, 'Should return data')
       t.ok(res.body?.data?.length > 0, 'Should return data')
-      res.body.data.forEach((entry, idx) => {
-        t.ok(entry.finalBudgetTtd, `Entry ${idx} should return finalBudgetTtd`)
+      res.body.data.forEach((entry) => {
+        t.ok(entry.finalBudgetTtd, 'Should return finalBudgetTtd')
       })
       t.end()
     }
@@ -277,66 +292,72 @@ test('POST /api/project/budget/currency should return project', function (t) {
   }))
 })
 
-test('POST /api/project/budget/currency with invalid data should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget/currency',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+test('POST /api/project/budget/currency invalid data should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget/currency',
+      {
+        encoding: 'json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
       }
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({ projectName: 'Rigua Nintendo', currency: 'EUR' }))
-})
+    ).end(JSON.stringify({
+      projectName: 'Rigua Nintendo',
+      currency: 'EUR'
+    }))
+  })
 
-test('POST /api/project/budget/currency with invalid currency should return 500', function (t) {
-  servertest(
-    server,
-    '/api/project/budget/currency',
-    {
-      encoding: 'json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+test('POST /api/project/budget/currency invalid currency should return 500',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget/currency',
+      {
+        encoding: 'json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 500, 'Should return 500')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
       }
-    },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 500, 'Should return 500')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  ).end(JSON.stringify({
-    year: 2025,
-    projectName: 'Project X',
-    currency: 'invalid'
-  }))
-})
+    ).end(JSON.stringify({
+      year: 2025,
+      projectName: 'Project X',
+      currency: 'invalid'
+    }))
+  })
 
-test('DELETE /api/project/budget/:id with invalid id should return 400', function (t) {
-  servertest(
-    server,
-    '/api/project/budget/invalid',
-    { encoding: 'json', method: 'DELETE' },
-    function (err, res) {
-      t.error(err, 'No error')
-      t.equal(res.statusCode, 400, 'Should return 400')
-      t.equal(res.body.success, false, 'Should return success: false')
-      t.ok(res.body.message, 'Should return error message')
-      t.end()
-    }
-  )
-})
+test('DELETE /api/project/budget/:id invalid id should return 400',
+  function (t) {
+    servertest(
+      server,
+      '/api/project/budget/invalid',
+      { encoding: 'json', method: 'DELETE' },
+      function (err, res) {
+        t.error(err, 'No error')
+        t.equal(res.statusCode, 400, 'Should return 400')
+        t.equal(res.body.success, false, 'Should return false')
+        t.ok(res.body.message, 'Should return error message')
+        t.end()
+      }
+    )
+  })
 
 test('DELETE /api/project/budget/:id should delete project', function (t) {
   servertest(
