@@ -222,3 +222,16 @@ test('PUT /api/project/budget/:id with invalid data should return 400', function
     }
   ).end(JSON.stringify({ ...invalidData, projectId: undefined }))
 })
+
+test('DELETE /api/project/budget/:id should delete project', function (t) {
+  servertest(
+    server,
+    '/api/project/budget/707078',
+    { encoding: 'json', method: 'DELETE' },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 200, 'Should return 200')
+      t.end()
+    }
+  )
+})
