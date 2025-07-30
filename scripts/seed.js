@@ -1,26 +1,11 @@
 const fs = require('fs')
 const db = require('../lib/db')
-
+const { CREATE_TABLE_SQL } = require('../lib/utils/constants')
 const stream = fs.createReadStream('./data/projects.csv')
 
-const createTableSql = `
-  CREATE TABLE IF NOT EXISTS project (
-    projectId INT PRIMARY KEY,
-    projectName VARCHAR(255),
-    year INT,
-    currency VARCHAR(3),
-    initialBudgetLocal DECIMAL(10, 2),
-    budgetUsd DECIMAL(10, 2),
-    initialScheduleEstimateMonths INT,
-    adjustedScheduleEstimateMonths INT,
-    contingencyRate DECIMAL(5, 2),
-    escalationRate DECIMAL(5, 2),
-    finalBudgetUsd DECIMAL(10, 2)
-  )
-`
 let data = ''
 
-db.query(createTableSql, err => {
+db.query(CREATE_TABLE_SQL, err => {
   if (err) return console.error('Error creating table:', err)
   stream.on('data', chunk => {
     data += chunk.toString()
