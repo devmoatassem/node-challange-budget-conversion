@@ -223,6 +223,76 @@ test('PUT /api/project/budget/:id with invalid data should return 400', function
   ).end(JSON.stringify({ ...invalidData, projectId: undefined }))
 })
 
+test('POST /api/project/budget/currency should return project', function (t) {
+  servertest(
+    server,
+    '/api/project/budget/currency',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 200, 'Should return 200')
+      t.end()
+    }
+  ).end(JSON.stringify({
+    year: 2025,
+    projectName: 'Project X',
+    currency: 'TTD'
+  }))
+})
+
+test('POST /api/project/budget/currency with invalid data should return 400', function (t) {
+  servertest(
+    server,
+    '/api/project/budget/currency',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 400, 'Should return 400')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify({ projectName: 'Humitas Hewlett Packard', currency: 'EUR' }))
+})
+
+test('POST /api/project/budget/currency with invalid currency should return 500', function (t) {
+  servertest(
+    server,
+    '/api/project/budget/currency',
+    {
+      encoding: 'json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    },
+    function (err, res) {
+      console.log(res)
+      t.error(err, 'No error')
+      t.equal(res.statusCode, 500, 'Should return 500')
+      t.equal(res.body.success, false, 'Should return success: false')
+      t.ok(res.body.message, 'Should return error message')
+      t.end()
+    }
+  ).end(JSON.stringify({
+    year: 2025,
+    projectName: 'Project X',
+    currency: 'invalid'
+  }))
+})
+
 test('DELETE /api/project/budget/:id should delete project', function (t) {
   servertest(
     server,
